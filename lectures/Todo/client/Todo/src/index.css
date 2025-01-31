@@ -1,4 +1,38 @@
-:root {
+/* Mobile-first styles */
+.container {
+  width: 100%;
+  padding: 10px;
+}
+
+.header {
+  font-size: 24px;
+}
+
+/* Tablet styles */
+@media (min-width: 768px) {
+  .container {
+      width: 90%;
+      padding: 20px;
+  }
+
+  .header {
+      font-size: 28px;
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 1024px) {
+  .container {
+      width: 80%;
+      padding: 30px;
+  }
+
+  .header {
+      font-size: 32px;
+  }
+}
+
+/* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -65,4 +99,4 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
-}
+} */
