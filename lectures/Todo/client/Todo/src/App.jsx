@@ -32,7 +32,7 @@ function App() {
     console.warn("USEEFFECT HIT AGAIN")
     axios({
       method: "get",
-      url: "http://localhost:3000/gettodos"
+      url: "http://localhost:5000/gettodos"
     })
       .then(res => {
         console.log("res", res)
@@ -64,7 +64,7 @@ function App() {
     console.log("i am getting stuff")
     axios({
       method: "post",
-      url: "http://localhost:3000/create",
+      url: "http://localhost:5000/create",
       data: newToDo
 
     })
@@ -83,7 +83,7 @@ function App() {
 
     axios({
       method: "delete",
-      url: `http://localhost:3000/delete/${e.target.id}`
+      url: `http://localhost:5000/delete/${e.target.id}`
     })
       .then(res => {
         console.log("re", res)
@@ -101,7 +101,7 @@ function App() {
     console.log("HandleEdit HIT", e.target.id)
     axios({
       method: "put",
-      url: `http://localhost:3000/edit/${e.target.id}`,
+      url: `http://localhost:5000/edit/${e.target.id}`,
       data: edit
     })
       .then(res => {
