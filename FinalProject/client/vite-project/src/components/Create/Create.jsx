@@ -3,14 +3,16 @@ import React, { useState } from "react";
 import axios from "axios";
 
 const Create = ({ onCreate }) => {
+  //track new to 
   const [newTodo, setNewTodo] = useState("");
 
   const handleChange = (e) => {
     setNewTodo(e.target.value);
   };
-
+//sends to backend to create 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault();//prevents pafe relaod
+    //dont allow empty todos
     if (newTodo.trim() === "") {
       console.warn("Todo cannot be empty");
       return;
@@ -19,14 +21,18 @@ const Create = ({ onCreate }) => {
       const response = await axios.post(
         "http://localhost:5000/create",
         { todo: newTodo,
+          //converts the value of  createdAt key to "date" to readable date  and adds it to a tiem stamp 
           createdAt: new Date().toISOString() 
          },
+         //include cookie for auth
         { withCredentials: true }
       );
       console.log("Create Hit", response.data);
+      //if created succeffully
       if (response.status === 200) {
         console.log("Todo created successfully:", response.data);
         setNewTodo("");
+        //notifiy parent "Home" to refresh list 
         if (onCreate) onCreate();
       }
     } catch (error) {

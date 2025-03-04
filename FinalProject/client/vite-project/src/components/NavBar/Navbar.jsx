@@ -7,19 +7,25 @@ import Logo from "../../assets/Dev.svg";
 const Navbar = () => {
   const { authedUser, setAuthedUser } = useContext(UserContext);
   const username = localStorage.getItem("username");
+  //check local storage for token
   const isUserSignedIn = !!localStorage.getItem("token");
   const navigate = useNavigate();
+//handles logout 
   const HandleLogout = async () => {
     try {
-      const response = await axios.post(
+      const response = await axios.
+      //sends request to backend
+    post(
         "http://localhost:5000/logout",
         {},
         {
           withCredentials: true,
         }
       );
+      //clear client auth data
       localStorage.removeItem("token");
       localStorage.removeItem("username");
+      //set user context to nothing
       setAuthedUser(null);
       alert("User Logged Out!");
       navigate("/login");
@@ -40,6 +46,7 @@ const Navbar = () => {
           />
         </div>
         <ul className="ul-navbar">
+             {/* shows user controls based on login status */}
           {isUserSignedIn && username ? (
             <>
               <div className="li-account">
@@ -53,6 +60,7 @@ const Navbar = () => {
               </div>
             </>
           ) : (
+              // Guest menu
             <>
               <div className="li-login">
                 <li className="li-navbar">

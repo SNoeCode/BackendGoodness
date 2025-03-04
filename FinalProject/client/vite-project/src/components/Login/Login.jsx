@@ -25,8 +25,11 @@ const Login = () => {
         });
       }
     }, []);
+
+  // Function to handle form input changes and update the login state
   const handleLogin = (e) => {
     console.log("login", e.target.value);
+    
     setLogin((prev) => {
       console.log("prev", prev);
       return {
@@ -34,8 +37,12 @@ const Login = () => {
         [e.target.id]: e.target.value,
       };
     });
-  };
-  const handleLoginConfirm = async () => {
+  
+};
+
+//verify credentials via the backend  
+const handleLoginConfirm = async () => {
+  //sends form data to backend for verification
     try {
       const response = await axios.post("http://localhost:5000/login", login, {
         headers: {
@@ -43,6 +50,7 @@ const Login = () => {
         },
         withCredentials: true,
       });
+      //saves login and user in user context and local storagw
       const userData = response.data.found;
       setAuthedUser({
         username: userData.username,
@@ -51,8 +59,10 @@ const Login = () => {
       localStorage.setItem("username", userData.username);
       localStorage.setItem("token", response.data.token || "");
 
+
       alert("User Logged In");
-      navigate("/account/home");
+//sends user to use home page     
+ navigate("/account/home");
     } catch (error) {
       console.error("Error during login:", error);
       setError("Login failed. Please check your credentials and try again.");

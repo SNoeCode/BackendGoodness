@@ -3,9 +3,7 @@ const ToDo = require("../models/toDoModel");
 module.exports = {
   getTodo: (req, res) => {
     console.log("GetToDos HIT");
-
     const userId = req.user.id;
-
     ToDo.find({ userId: userId })
       .then((todos) => {
         res.json(todos);
@@ -17,17 +15,23 @@ module.exports = {
       });
   },
   createTodo: (req, res) => {
-    console.log("Create Hit", req.body);
+    const { todo } = req.body;
+    const userId = req.user.id;
+
+    if (!todo) {
+      return res.status(400).json({ msg: "Todo content is required" });
+    }
 
     const newTodo = new ToDo({
-      ...req.body,
-      userId: req.user.id,
+      todo,
+      userId,
+      createdAt: new Date(),
     });
 
     newTodo
       .save()
-      .then((todo) => {
-        res.json(todo);
+      .then((createdTodo) => {
+        res.status(201).json(createdTodo);
       })
       .catch((err) => {
         console.error("Error creating todo:", err);
@@ -49,10 +53,9 @@ module.exports = {
         });
     }
   },
-
   editTodo: (req, res) => {
     console.log("Edit Hit", req.params.id, req.body);
-    ToDo.findByIdAndUpdate(req.params.id, req.body, { new: true }).then(
+    ToDo.findByIdAndUpdate(req.params.id, req.body, { new: true, completed: false }).then(
       (updated) => {
         console.log("updatead", updated);
         res.json(updated);

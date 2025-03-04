@@ -6,8 +6,9 @@ import { RiDeleteBin5Line } from "react-icons/ri";
 import { RiEdit2Line } from "react-icons/ri";
 
 import "./Home.css";
-
+/// U MIGHT HAVE TO CLEAR THE SITE DATA IN THE APPLICATION, BECAUSE EVERTIME I CLOSE THE BROWESER WITHOUT LOGIN OUT PROPERLY I HAVE TO CLEAR DATA
 const Home = () => {
+  // state for todos and editing
   const [todo, setTodo] = useState([]);
 
   const [isUpdating, setIsUpdating] = useState(false);
@@ -15,23 +16,27 @@ const Home = () => {
   const [updated, setUpdated] = useState("");
 
   const [editingId, setEditingId] = useState(null);
+  // get authed info from context and local storage
   const username = localStorage.getItem("username");
   const isUserSignedIn = !!localStorage.getItem("token");
   const { authedUser, setAuthedUser } = useContext(UserContext);
-
+  //syncs local storage and contxt
   useEffect(() => {
     setAuthedUser(authedUser);
   }, [authedUser, setAuthedUser]);
-
+  //fetching users todos from backend
   const fetchTodos = () => {
     axios
       .get("http://localhost:5000/gettodos", { withCredentials: true })
       .then((response) => {
         console.log("Fetched Todos:", response.data);
+        // {why use Array.arrayvents errors if todo isnt array, ex "", so it dosent retunr empty array, makes cide nore reslient to form changes }
         if (Array.isArray(response.data)) {
+          //sorts todos by date created
           const sortedTodos = response.data.sort(
             (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
           );
+          //sets the todos to sorted todos
           setTodo(sortedTodos);
         } else {
           console.error("Unexpected response structure:", response.data);
@@ -43,34 +48,38 @@ const Home = () => {
         setTodo([]);
       });
   };
+  //loads todos when component mounts(loads) or when authed user changes
   useEffect(() => {
     if (isUserSignedIn) {
       fetchTodos();
     }
   }, [isUserSignedIn]);
+  //console.log todos state for debugging
   useEffect(() => {
     console.log("Current todos state:", todo);
   }, [todo]);
-
+  //refreshes todo list after created dto instantly see todos
   const handleCreate = () => {
     fetchTodos();
   };
-
+  //used for debugging
   useEffect(() => {
     console.log("Updated todos state:", todo);
   }, []);
+  //start editing todo
   const handleUpdate = (id, currentTodo) => {
-    setIsUpdating(false);
+    setIsUpdating(true);
     // EditedAt: new Date().toISOString(),
-    // setUpdated(currentTodo);
-    setUpdated("");
+     setUpdated(currentTodo);
+   // setUpdated("");
     setEditingId(id);
   };
+  //saved edited todo to backedn
   const saveUpdatedEdit = (id) => {
     axios
       .put(
         `http://localhost:5000/edit/${id}`,
-        { todo: updated, EditedAt: new Date().toISOString()  },
+        { todo: updated, EditedAt: new Date().toISOString() },
         { withCredentials: true }
       )
       .then((response) => {
@@ -78,15 +87,16 @@ const Home = () => {
 
         if (response.status === 200) {
           console.log("Todo updated successfully:", response.data);
-
+          //updates local storafe with edited todo
           setTodo((prevTodos) =>
             prevTodos.map((item) =>
-              item._id === id ? { ...item, todo: response.data.todo } : item
+              item._id === id ? { ...response.data, EditedAt: new Date().toISOString() 
+              } : item
             )
           );
-          setIsUpdating(true);
+          setIsUpdating(false);
           setEditingId(null);
-
+          //clears the inputs
           setUpdated("");
         } else {
           console.log("Error updating todo:", err);
@@ -94,7 +104,7 @@ const Home = () => {
       })
       .catch((err) => console.log("err", err));
   };
-
+  //toggles to do completion status and done status
   const handleToggle = (id) => {
     const currentTodo = todo.find((item) => item._id === id);
     if (!currentTodo) return;
@@ -109,6 +119,7 @@ const Home = () => {
       .then((response) => {
         console.log("res", response);
         if (response.status === 200) {
+          //updates local state with new completed stauts
           setTodo((prevTodos) =>
             prevTodos.map((item) =>
               item._id === id ? { ...item, done: !item.done } : item
@@ -118,7 +129,7 @@ const Home = () => {
       })
       .catch((error) => console.log("error", error));
   };
-
+  //deletes toso
   const handleDelete = (id) => {
     console.log("Attempting to delete todo with ID:", id);
     axios
@@ -127,6 +138,7 @@ const Home = () => {
       })
       .then((response) => {
         console.log("Test delete response:", response);
+        //removes from local storafe
         setTodo((prevTodos) => prevTodos.filter((item) => item._id !== id));
       })
       .catch((err) => {
@@ -136,6 +148,7 @@ const Home = () => {
 
   return (
     <>
+      {/* User greeting */}
       {isUserSignedIn && username ? (
         <h2>Welcome, {username}</h2>
       ) : (
@@ -143,7 +156,7 @@ const Home = () => {
       )}
       <div className="main">TO DO LIST</div>
       <Create onCreate={handleCreate} />
-
+      {/* Todo list display */}
       <br />
       {console.log("Rendering todos:", todo)}
       {console.log("Is todo an array:", Array.isArray(todo))}
@@ -181,7 +194,7 @@ const Home = () => {
                 {item.done ? "✔" : ""}
               </button>
             </div>
-            {isUpdating && editingId === item._id ? (
+            {editingId === item._id ? (
               <div className="updated-container">
                 <input
                   placeholder="Update text...."
