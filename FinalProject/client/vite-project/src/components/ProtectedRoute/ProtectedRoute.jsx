@@ -12,7 +12,7 @@ const ProtectedRoute = () => {
 //check aith status
   useEffect(() => {
     console.log("Performing auth check...");
-    axios.get("http://localhost:5000/authCheck", { withCredentials: true })
+    axios.get("http://localhost:5001/authCheck", { withCredentials: true })
       .then((res) => {
         //if server says good token compare msgs in front end and backend
         if (res.data.msg === "valid token") {

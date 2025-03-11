@@ -16,7 +16,7 @@ const Navbar = () => {
       const response = await axios.
       //sends request to backend
     post(
-        "http://localhost:5000/logout",
+        "http://localhost:5001/logout",
         {},
         {
           withCredentials: true,

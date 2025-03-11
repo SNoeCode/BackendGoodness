@@ -27,11 +27,12 @@ const Home = () => {
   //fetching users todos from backend
   const fetchTodos = () => {
     axios
-      .get("http://localhost:5000/gettodos", { withCredentials: true })
+      .get("http://localhost:5001/gettodos", { withCredentials: true })
       .then((response) => {
         console.log("Fetched Todos:", response.data);
         // {why use Array.arrayvents errors if todo isnt array, ex "", so it dosent retunr empty array, makes cide nore reslient to form changes }
         if (Array.isArray(response.data)) {
+          console.log(console.log("fetched", response.data))
           //sorts todos by date created
           const sortedTodos = response.data.sort(
             (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
@@ -48,6 +49,8 @@ const Home = () => {
         setTodo([]);
       });
   };
+
+  
   //loads todos when component mounts(loads) or when authed user changes
   useEffect(() => {
     if (isUserSignedIn) {
@@ -59,8 +62,11 @@ const Home = () => {
     console.log("Current todos state:", todo);
   }, [todo]);
   //refreshes todo list after created dto instantly see todos
-  const handleCreate = () => {
+  //inverse data flow
+  const handleCreate = (input) => {
+    console.log("input", input)
     fetchTodos();
+
   };
   //used for debugging
   useEffect(() => {
@@ -78,7 +84,7 @@ const Home = () => {
   const saveUpdatedEdit = (id) => {
     axios
       .put(
-        `http://localhost:5000/edit/${id}`,
+        `http://localhost:5001/edit/${id}`,
         { todo: updated, EditedAt: new Date().toISOString() },
         { withCredentials: true }
       )
@@ -110,7 +116,7 @@ const Home = () => {
     if (!currentTodo) return;
     axios
       .put(
-        `http://localhost:5000/edit/${id}`,
+        `http://localhost:5001/edit/${id}`,
         {
           completed: !currentTodo.completed,
         },
@@ -133,7 +139,7 @@ const Home = () => {
   const handleDelete = (id) => {
     console.log("Attempting to delete todo with ID:", id);
     axios
-      .delete(`http://localhost:5000/delete/${id}`, {
+      .delete(`http://localhost:5001/delete/${id}`, {
         withCredentials: true,
       })
       .then((response) => {

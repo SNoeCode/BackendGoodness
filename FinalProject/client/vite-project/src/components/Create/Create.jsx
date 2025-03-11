@@ -11,7 +11,7 @@ const Create = ({ onCreate }) => {
   };
 //sends to backend to create 
   const handleSubmit = async (e) => {
-    e.preventDefault();//prevents pafe relaod
+    e.preventDefault();//prevents page relaod
     //dont allow empty todos
     if (newTodo.trim() === "") {
       console.warn("Todo cannot be empty");
@@ -19,7 +19,7 @@ const Create = ({ onCreate }) => {
     }
     try {
       const response = await axios.post(
-        "http://localhost:5000/create",
+        "http://localhost:5001/create",
         { todo: newTodo,
           //converts the value of  createdAt key to "date" to readable date  and adds it to a tiem stamp 
           createdAt: new Date().toISOString() 
@@ -29,11 +29,11 @@ const Create = ({ onCreate }) => {
       );
       console.log("Create Hit", response.data);
       //if created succeffully
+      //notifiy parent "Home" to refresh list 
+      onCreate(newTodo);
       if (response.status === 200) {
         console.log("Todo created successfully:", response.data);
         setNewTodo("");
-        //notifiy parent "Home" to refresh list 
-        if (onCreate) onCreate();
       }
     } catch (error) {
       console.error("Error creating todo:", error);

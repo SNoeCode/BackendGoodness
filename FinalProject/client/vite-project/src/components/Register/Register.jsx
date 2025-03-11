@@ -22,7 +22,7 @@ const Register = () => {
   //sends data to backend to create
   const handleRegisterConfirm = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/register", {
+      const response = await axios.post("http://localhost:5001/register", {
         username: register.username,
         password: register.password,
        
